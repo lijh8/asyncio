@@ -1,6 +1,10 @@
 # https://docs.python.org/3/library/asyncio-stream.html
 
+# python3 client.py foo
+# python3 client.py bar
+
 import asyncio
+import signal
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -58,8 +62,12 @@ async def main():
         sys.exit(1) # OK
         pass
 
+def handle_sigpipe(*args):
+    INFO(f"SIGPIPE")
+
 
 try:
+    signal.signal(signal.SIGPIPE, handle_sigpipe)
     logging2_init()
     asyncio.run(main())
 except KeyboardInterrupt as e:
