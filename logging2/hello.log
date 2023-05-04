@@ -1,18 +1,26 @@
+2023-05-05 00:15:47,541 DEBUG  /usr/local/Cellar/python@3.11/3.11.3/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py:54:__init__: Using selector: KqueueSelector
+2023-05-05 00:15:47,545 INFO  /Users/ljh/Documents/hello_py/server/server.py:56:main: serving on ('192.168.1.31', 8888)
+2023-05-05 00:15:50,735 INFO  /Users/ljh/Documents/hello_py/server/server.py:71:<module>: Info:
+2023-05-05 00:15:52,648 DEBUG  /usr/local/Cellar/python@3.11/3.11.3/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/selector_events.py:54:__init__: Using selector: KqueueSelector
+2023-05-05 00:15:52,651 INFO  /Users/ljh/Documents/hello_py/server/server.py:56:main: serving on ('192.168.1.31', 8888)
+2023-05-05 00:15:54,242 INFO  /Users/ljh/Documents/hello_py/server/server.py:71:<module>: Info:
+Using selector: KqueueSelector
+serving on ('192.168.1.31', 8888)
+Info:
+Using selector: KqueueSelector
+serving on ('192.168.1.31', 8888)
+Info:
+Using selector: KqueueSelector
+serving on ('192.168.1.31', 8888)
+Info:
 Using selector: KqueueSelector
 serving on ('192.168.1.31', 8888)
 Using selector: KqueueSelector
 connecting to 192.168.1.31:8888
-accepting connection from ('192.168.1.31', 62502)
-hello client 1
+accepting connection from ('192.168.1.31', 53171)
 hello server from foo 1
-hello client 2
+hello client 1
 hello server from foo 2
-hello client 3
+hello client 2
 hello server from foo 3
-hello client 4
-hello server from foo 4
-hello client 5
-hello server from foo 5
-hello client 6
-hello server from foo 6
-hello client 7
+hello client 3

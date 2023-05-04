@@ -10,7 +10,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from logging2.logging2 import *
 
-async def read_write_cb(reader, writer, message):
+
+async def read_write_func(reader, writer, message):
     seq = 0
     while True:
         try:
@@ -24,21 +25,28 @@ async def read_write_cb(reader, writer, message):
 
             # await asyncio.sleep(1) # test only
 
-        except asyncio.exceptions.CancelledError as e:
-            # INFO(f"Error: {e}")
+        except asyncio.exceptions.IncompleteReadError as e:
+            # INFO(f"Info: {e}")
             break
-        except asyncio.TimeoutError as e:
-            # INFO(f"Error: {e}")
-            continue
+        except BrokenPipeError as e:
+            # INFO(f"Info: {e}")
+            break
         except ConnectionResetError as e:
-            # INFO(f"Error: {e}")
+            # INFO(f"Info: {e}")
+            break
+        except asyncio.exceptions.CancelledError as e:
+            # INFO(f"Info: {e}")
             break
         except KeyboardInterrupt as e:
-            # INFO(f"Error: {e}")
+            # INFO(f"Info: {e}")
             break
-        except Exception as e:
-            INFO(f"Error: {e}")
+        except asyncio.TimeoutError as e:
+            # INFO(f"Info: {e}")
+            continue
+        except GeneratorExit as e:
+            INFO(f"Info: {e}")
             break
+
 
 async def main():
     tag = sys.argv[1]
@@ -46,33 +54,18 @@ async def main():
     port = 8888
     INFO(f"connecting to {ip}:{port}")
 
-    try:
-        reader, writer = await asyncio.open_connection(ip, port)
-        await read_write_cb(reader, writer, tag)
-    except ConnectionRefusedError as e:
-        # INFO(f"Error: {e}")
-        sys.exit(1) # OK
-        pass
-    except KeyboardInterrupt as e:
-        # INFO(f"Error: {e}")
-        sys.exit(1) # OK
-        pass
-    except OSError as e:
-        INFO(f"Error: {e}")
-        sys.exit(1) # OK
-        pass
+    reader, writer = await asyncio.open_connection(ip, port)
+    await read_write_func(reader, writer, tag)
+
 
 def handle_sigpipe(*args):
-    INFO(f"SIGPIPE")
+    INFO(f"SIGPIPE handled")
 
 
 try:
     signal.signal(signal.SIGPIPE, handle_sigpipe)
     logging2_init()
     asyncio.run(main())
-except KeyboardInterrupt as e:
-    # INFO(f"Error: {e}")
-    pass
-except Exception as e:
-    INFO(f"Error: {e}")
+except BaseException as e:
+    INFO(f"Info: {e}")
     pass
