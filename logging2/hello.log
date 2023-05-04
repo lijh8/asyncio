@@ -2,19 +2,17 @@ Using selector: KqueueSelector
 serving on ('192.168.1.31', 8888)
 Using selector: KqueueSelector
 connecting to 192.168.1.31:8888
-accepting connection from ('192.168.1.31', 59036)
-hello server from foo 1
+accepting connection from ('192.168.1.31', 62502)
 hello client 1
-hello server from foo 2
+hello server from foo 1
 hello client 2
-hello server from foo 3
+hello server from foo 2
 hello client 3
+hello server from foo 3
 hello client 4
 hello server from foo 4
-hello server from foo 5
 hello client 5
+hello server from foo 5
 hello client 6
 hello server from foo 6
-hello server from foo 7
 hello client 7
-hello client 8

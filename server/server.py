@@ -1,7 +1,6 @@
 # https://docs.python.org/3/library/asyncio-stream.html
 
 import asyncio
-import signal
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -36,6 +35,12 @@ async def connect_cb(reader, writer):
         except BrokenPipeError as e:
             # INFO(f"Error: {e}")
             break
+        except KeyboardInterrupt as e:
+            # INFO(f"Error: {e}")
+            break
+        except Exception as e:
+            INFO(f"Error: {e}")
+            break
 
 async def main():
     server = await asyncio.start_server(
@@ -49,20 +54,24 @@ async def main():
             await server.serve_forever()
     except asyncio.exceptions.CancelledError as e:
         # INFO(f"Error: {e}")
+        sys.exit(1) # OK
         pass
     except KeyboardInterrupt as e:
         # INFO(f"Error: {e}")
+        sys.exit(1) # OK
         pass
     except OSError as e:
         INFO(f"Error: {e}")
+        sys.exit(1) # OK
         pass
 
-def signal_handler(sig, frame):
-    loop = asyncio.get_event_loop()
-    tasks = asyncio.all_tasks(loop=loop)
-    for task in tasks:
-        task.cancel()
 
-logging2_init()
-signal.signal(signal.SIGINT, signal_handler)
-asyncio.run(main())
+try:
+    logging2_init()
+    asyncio.run(main())
+except KeyboardInterrupt as e:
+    # INFO(f"Error: {e}")
+    pass
+except Exception as e:
+    INFO(f"Error: {e}")
+    pass

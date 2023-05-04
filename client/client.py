@@ -2,7 +2,6 @@
 
 import asyncio
 import sys
-import signal
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from logging2.logging2 import *
@@ -30,6 +29,12 @@ async def read_write_cb(reader, writer, message):
         except ConnectionResetError as e:
             # INFO(f"Error: {e}")
             break
+        except KeyboardInterrupt as e:
+            # INFO(f"Error: {e}")
+            break
+        except Exception as e:
+            INFO(f"Error: {e}")
+            break
 
 async def main():
     tag = sys.argv[1]
@@ -41,21 +46,25 @@ async def main():
         reader, writer = await asyncio.open_connection(ip, port)
         await read_write_cb(reader, writer, tag)
     except ConnectionRefusedError as e:
-        INFO(f"Error: {e}")
+        # INFO(f"Error: {e}")
+        sys.exit(1) # OK
         pass
     except KeyboardInterrupt as e:
-        INFO(f"Error: {e}")
+        # INFO(f"Error: {e}")
+        sys.exit(1) # OK
         pass
     except OSError as e:
         INFO(f"Error: {e}")
+        sys.exit(1) # OK
         pass
 
-def signal_handler(sig, frame):
-    loop = asyncio.get_event_loop()
-    tasks = asyncio.all_tasks(loop=loop)
-    for task in tasks:
-        task.cancel()
 
-logging2_init()
-signal.signal(signal.SIGINT, signal_handler)
-asyncio.run(main())
+try:
+    logging2_init()
+    asyncio.run(main())
+except KeyboardInterrupt as e:
+    # INFO(f"Error: {e}")
+    pass
+except Exception as e:
+    INFO(f"Error: {e}")
+    pass
