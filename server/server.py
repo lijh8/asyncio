@@ -1,72 +1,87 @@
-# https://docs.python.org/3/library/asyncio-stream.html
-
-# python3 server.py
+# python3 server.py <port>
 
 import asyncio
 import signal
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
 from logging2.logging2 import *
 
 
-async def connect_cb(reader, writer):
-    addr = writer.get_extra_info('peername')
-    INFO(f"accepting connection from {addr}")
+running = True
 
+
+async def handle_conn(reader, writer):
     seq = 0
-    while True:
+    addr = writer.get_extra_info('peername')
+    INFO(f'accepting connection from {addr}')
+
+    while running:
+        seq += 1
+
         try:
-            seq += 1
-            writer.write(f"hello client {seq}".encode())
+            writer.write(f'hello client {seq}\n'.encode())
             await writer.drain()
 
-            data = await asyncio.wait_for(reader.read(100), timeout=0.1)
-            if data:
-                INFO(f"{data.decode()}")
+            data = await asyncio.wait_for(reader.read(100),
+                                          timeout=0.01)
 
-        except asyncio.exceptions.IncompleteReadError as e:
-            # INFO(f"Info: {e}")
+            if data:
+                print(f'{data.decode()}', end='')
+
+        except asyncio.TimeoutError as e:
+            # INFO(f'{e}')
+            continue
+        except ConnectionResetError as e:
+            INFO(f'{e}')
             break
         except BrokenPipeError as e:
-            # INFO(f"Info: {e}")
-            break
-        except ConnectionResetError as e:
-            # INFO(f"Info: {e}")
-            break
-        except asyncio.exceptions.CancelledError as e:
-            # INFO(f"Info: {e}")
+            INFO(f'{e}')
             break
         except KeyboardInterrupt as e:
-            # INFO(f"Info: {e}")
+            INFO(f'{e}')
             break
-        except asyncio.TimeoutError as e:
-            # INFO(f"Info: {e}")
-            continue
-        except GeneratorExit as e:
-            # INFO(f"Info: {e}")
+        except RuntimeError as e:
+            INFO(f'{e}')
             break
+
+        # await asyncio.sleep(1) # test only
+
+    writer.close()
 
 
 async def main():
-    server = await asyncio.start_server(
-        connect_cb, '192.168.1.31', 8888)
+    port = sys.argv[1]
+    server = await asyncio.start_server(handle_conn, '', port)
 
-    addrs = ', '.join(str(sock.getsockname()) for sock in server.sockets)
+    addrs = ', '.join(str(sock.getsockname())
+                      for sock in server.sockets)
     INFO(f'serving on {addrs}')
 
     async with server:
         await server.serve_forever()
 
 
-def handle_sigpipe(*args):
-    INFO(f"SIGPIPE handled")
+def handle_sigint(signum, frame):
+    global running
+    running = False
+
+    for task in asyncio.all_tasks():
+        task.cancel()
+
+    asyncio.get_event_loop().stop()
+    signal.default_int_handler(signum, frame)
 
 
 try:
-    signal.signal(signal.SIGPIPE, handle_sigpipe)
     logging2_init()
+    signal.signal(signal.SIGINT, handle_sigint)
     asyncio.run(main())
-except BaseException as e:
-    INFO(f"Info: {e}")
+except RuntimeError as e:
+    INFO(f'{e}')
     pass
+except KeyboardInterrupt as e:
+    INFO(f'{e}')
+    pass
+
