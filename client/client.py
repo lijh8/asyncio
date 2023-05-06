@@ -8,20 +8,33 @@ sys.path.append(os.path.dirname(os.path.dirname(
 from logging2.logging2 import *
 
 
-async def handle_conn(reader, writer, message):
-    seq = 0
+running = True
+missing_count = 10
 
-    while True:
+
+async def handle_conn(reader, writer, message):
+    global running
+    global missing_count
+    seq = 0
+    count = 0
+
+    while running:
         seq += 1
 
         try:
-            writer.write(f'hello server from {message} {seq}\n'.encode())
+            writer.write(f'hello server from {message} {seq}\n'.
+                         encode())
             await writer.drain()
 
             data = await asyncio.wait_for(reader.read(100),
-                                          timeout=0.01)
+                                          timeout=0.1)
             if data:
                 print(f'{data.decode()}', end='')
+            else:
+                count += 1
+                if count == missing_count:
+                    running = False
+                    INFO(f'reaching missing limits: {count}')
 
         except asyncio.TimeoutError as e:
             # INFO(f'{e}')
