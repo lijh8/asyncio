@@ -26,9 +26,6 @@ async def handle_conn(reader, writer):
         except asyncio.TimeoutError as e:
             INFO(f'{e}')
             continue
-        except KeyboardInterrupt as e:
-            INFO(f'{e}')
-            break
         except BaseException as e:
             INFO(f'{e}')
             break
@@ -48,13 +45,9 @@ async def main():
 
 try:
     logging2_init()
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
 
 except asyncio.CancelledError as e:
-    INFO(f'{e}')
-except KeyboardInterrupt as e:
     INFO(f'{e}')
 except BaseException as e:
     INFO(f'{e}')
