@@ -45,9 +45,8 @@ async def main():
 
 try:
     logging2_init()
-    asyncio.run(main())
-
-except asyncio.CancelledError as e:
-    INFO(f'{e}')
+    # asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 except BaseException as e:
     INFO(f'{e}')
