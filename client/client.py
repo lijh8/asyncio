@@ -44,9 +44,10 @@ try:
     logging2_init()
     # asyncio.run(main())
     loop = asyncio.get_event_loop()
-    loop.add_signal_handler(signal.SIGINT, loop.stop)
-    loop.add_signal_handler(signal.SIGTERM, loop.stop)
-    loop.run_until_complete(main())
-
+    task = asyncio.ensure_future(main())
+    shielded_task = asyncio.shield(task)
+    loop.add_signal_handler(signal.SIGINT, lambda: shielded_task.cancel())
+    loop.add_signal_handler(signal.SIGTERM, lambda: shielded_task.cancel())
+    loop.run_until_complete(shielded_task)
 except BaseException as e:
     INFO(f'{e}')
