@@ -42,11 +42,9 @@ async def main():
     INFO(f'serving on {addrs}')
 
     async with server:
-
         loop = asyncio.get_running_loop()
         loop.add_signal_handler(signal.SIGINT, server.close)
         loop.add_signal_handler(signal.SIGTERM, server.close)
-
         await server.serve_forever()
 
 try:
