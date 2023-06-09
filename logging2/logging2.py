@@ -16,11 +16,12 @@ def logging2_init():
     count = 10
     level = logging.DEBUG
 
-    fmt = "%(message)s"
+    fmt = "%(asctime)s %(levelname)s " \
+        "%(filename)s:%(lineno)d: %(message)s"
 
-    # enable for debug
+    # pathname and funcName
     # fmt = "%(asctime)s %(levelname)s " \
-    #     " %(pathname)s:%(lineno)d:%(funcName)s: %(message)s"
+    #     "%(pathname)s:%(lineno)d:%(funcName)s: %(message)s"
 
     path = os.path.dirname(os.path.abspath(__file__))
     file = os.path.join(path, filename)
