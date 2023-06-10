@@ -25,7 +25,7 @@ async def handle_conn(reader, writer):
                 print(f'{data.decode()}', end='')
 
         except asyncio.TimeoutError as e:
-            INFO(f'{e}')
+            # INFO(f'{e}')
             continue
         except BaseException as e:
             INFO(f'{e}')
