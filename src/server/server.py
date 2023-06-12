@@ -48,7 +48,7 @@ try:
     logging2_init()
     # asyncio.run(main())
     loop = asyncio.get_event_loop()
-    task = asyncio.ensure_future(main())
+    task = loop.create_task(main())
     shielded_task = asyncio.shield(task)
     loop.add_signal_handler(signal.SIGINT, lambda: shielded_task.cancel())
     loop.add_signal_handler(signal.SIGTERM, lambda: shielded_task.cancel())
