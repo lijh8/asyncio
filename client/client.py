@@ -8,14 +8,14 @@ sys.path.append(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))
 from logging2.logging2 import *
 
-async def handle_conn(reader, writer, message):
+async def handle_conn(reader, writer, tag):
     seq = 0
 
     while True:
         seq += 1
 
         try:
-            writer.write(f'hello from {message} {seq}\n'.encode())
+            writer.write(f'hello from {tag} {seq}\n'.encode())
             await writer.drain()
 
             data = await asyncio.wait_for(reader.read(100), timeout=0.1)
