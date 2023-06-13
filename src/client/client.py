@@ -48,5 +48,6 @@ try:
     loop.add_signal_handler(signal.SIGINT, lambda: shielded_task.cancel())
     loop.add_signal_handler(signal.SIGTERM, lambda: shielded_task.cancel())
     loop.run_until_complete(shielded_task)
+    loop.close()
 except BaseException as e:
     INFO(f'{type(e)}: {e}')
