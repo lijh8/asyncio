@@ -23,10 +23,9 @@ async def handle_conn(reader, writer, tag):
                 print(f'{data.decode()}', end='')
 
         except asyncio.TimeoutError as e:
-            # INFO(f'{e}')
             continue
         except BaseException as e:
-            INFO(f'{e}')
+            INFO(f'{type(e)}: {e}')
             break
 
     writer.close()
@@ -50,4 +49,4 @@ try:
     loop.add_signal_handler(signal.SIGTERM, lambda: shielded_task.cancel())
     loop.run_until_complete(shielded_task)
 except BaseException as e:
-    INFO(f'{e}')
+    INFO(f'{type(e)}: {e}')
